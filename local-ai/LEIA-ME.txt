@@ -1,0 +1,15 @@
+EDUTRACK IA NO HD
+
+Ligar IA: inicia o motor e o atendente da fila privada do site.
+Desligar IA: para pedidos, encerra o atendente e o motor, liberando memoria e GPU.
+Nao inicia automaticamente com o Windows. Nao ha portas abertas no roteador.
+O site continua no Netlify. O computador busca pedidos no Supabase por HTTPS.
+O PC precisa estar ligado, conectado e sem suspensao para gerar material.
+Ao desligar a IA, tarefas, agenda e demais recursos do site continuam funcionando.
+
+Modelos: D:\EduTrack-AI\models
+Programa: D:\EduTrack-AI\runtime
+Logs: D:\EduTrack-AI\logs (sem textos de estudantes)
+config.json contem uma credencial privada do atendente: nao compartilhe este arquivo.
+Uma geracao por vez; fila limitada para evitar sobrecarregar o computador.
+Nao ha cota diaria de geracoes no modo local. Limites de hospedagem do Supabase e Netlify continuam aplicaveis.

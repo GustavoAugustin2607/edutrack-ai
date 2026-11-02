@@ -1,0 +1,17 @@
+# dependências e builds
+/node_modules
+/out
+/dist
+*.tsbuildinfo
+
+# segredos e estado local
+.env*
+*.pem
+.netlify/
+config.json
+
+# relatórios de teste
+/playwright-report
+/test-results
+.playwright*
+/coverage
