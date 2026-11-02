@@ -1,0 +1,10 @@
+schema: spec-driven
+
+context: |
+  EduTrack AI is a study app for Brazilian students. Interface copy stays in
+  Brazilian Portuguese; OpenSpec artifacts stay in English.
+  The browser only holds the Supabase publishable key. Service-role keys and the
+  local worker token never enter the repository.
+  The language model runs on the owner's PC, so every flow must keep working
+  while the Tutor is offline.
+  XP is always derived from the study record: never add a writable XP counter.
