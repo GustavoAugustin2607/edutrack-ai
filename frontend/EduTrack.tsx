@@ -1,30 +1,21 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import {
-  LayoutDashboard,
-  ChartNoAxesCombined,
   CalendarDays,
   BookOpen,
   CheckCheck,
   Timer,
-  Layers,
-  Trophy,
-  Sparkles,
-  ArrowUpRight,
   Plus,
   Play,
   Search,
-  Bell,
   ChevronRight,
-  Cloud,
   Check,
   ExternalLink,
   Trash2,
   X,
-  Gamepad2,
 } from 'lucide-react';
 import Arcade from './Arcade';
-import { ALL_NAV, BottomTabs, NAV_GROUPS, Sidebar, Topbar } from './Shell';
+import { ALL_NAV, BottomTabs, Sidebar, Topbar } from './Shell';
 import { dailyQuests, weeklyQuests, chestKey } from './game';
 import SortingHat from './SortingHat';
 import { HOUSES, HOUSE_CHANGE_PRICE } from './houses';
@@ -55,7 +46,7 @@ import { Modal, TabBar, Choice, Empty } from './ui';
 import { TaskForm, SubjectForm, CardForm } from './Forms';
 import { Subjects, Reviews } from './StudyPages';
 import Journey from './Journey';
-import { GameHUD, useGame } from './GameUI';
+import { useGame } from './GameUI';
 import { taskXP } from './game';
 import {
   Integrations,
@@ -102,6 +93,7 @@ export default function EduTrack() {
     [entry, setEntry] = useState<'gate' | 'demo' | 'account'>('gate'),
     [journeyTab, setJourneyTab] = useState('overview'),
     [hatOpen, setHatOpen] = useState(false),
+    [justDone, setJustDone] = useState(''),
     [aiSeed, setAiSeed] = useState<{
       kind: AIKind;
       prompt?: string;
@@ -215,6 +207,11 @@ export default function EduTrack() {
   };
   const toggle = (t: Task) => {
     const done = t.status !== 'done';
+    if (done) {
+      // Keeps the row on screen long enough to play the completion feedback.
+      setJustDone(t.id);
+      window.setTimeout(() => setJustDone(current => (current === t.id ? '' : current)), 1100);
+    }
     change((s) => ({
       ...s,
       tasks: s.tasks.map((x) =>
@@ -358,8 +355,8 @@ export default function EduTrack() {
         t.title
           .toLocaleLowerCase('pt-BR')
           .includes(query.toLocaleLowerCase('pt-BR')) &&
-        (filter === 'done'
-          ? t.status === 'done'
+        (t.id === justDone || filter === 'done'
+          ? t.id === justDone || t.status === 'done'
           : filter === 'today'
             ? t.status !== 'done' && !!t.due_date && t.due_date <= today
             : filter === 'week'
@@ -378,7 +375,7 @@ export default function EduTrack() {
     const sub = state.subjects.find((s) => s.id === t.subject_id);
     return (
       <div
-        className={'task-row ' + (t.status === 'done' ? 'is-done' : '')}
+        className={'task-row ' + (t.status === 'done' ? 'is-done' : '') + (t.id === justDone ? ' just-done' : '')}
         key={t.id}
       >
         <Checkbox

@@ -257,6 +257,10 @@ export function BottomTabs({ page, go, badges }: ShellProps) {
     return () => window.removeEventListener('keydown', key);
   }, [open]);
   const inTabs = TABS.some(t => t.name === page);
+  const pick = (name: string) => {
+    go(name);
+    setOpen(false);
+  };
   return (
     <>
       <nav className="bottom-tabs" aria-label="Navegação rápida">
@@ -282,7 +286,7 @@ export function BottomTabs({ page, go, badges }: ShellProps) {
                 <p>{group.title}</p>
                 <div>
                   {group.items.map(item => (
-                    <button key={item.name} className={page === item.name ? 'active' : ''} aria-label={item.label} onClick={() => go(item.name)}>
+                    <button key={item.name} className={page === item.name ? 'active' : ''} aria-label={item.label} onClick={() => pick(item.name)}>
                       <item.icon size={20} />
                       <span>{item.label}</span>
                       {badges[item.name] && badges[item.name]!.count > 0 && <small className={'side-badge ' + badges[item.name]!.tone}>{badges[item.name]!.count}</small>}
@@ -294,11 +298,11 @@ export function BottomTabs({ page, go, badges }: ShellProps) {
             <div className="more-group">
               <p>Conta</p>
               <div>
-                <button aria-label="Integrações" onClick={() => go('Integrações')}>
+                <button aria-label="Integrações" onClick={() => pick('Integrações')}>
                   <Cloud size={20} />
                   <span>Classroom</span>
                 </button>
-                <button aria-label="Configurações" onClick={() => go('Configurações')}>
+                <button aria-label="Configurações" onClick={() => pick('Configurações')}>
                   <Settings size={20} />
                   <span>Ajustes</span>
                 </button>
