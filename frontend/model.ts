@@ -501,7 +501,7 @@ export function emptyGame(): GameState {
   };
 }
 export function gameOf(s: Workspace): GameState {
-  return { ...emptyGame(), ...(s.game ?? {}) };
+  return { ...emptyGame(), ...s.game };
 }
 function validGame(g: unknown): boolean {
   if (!g || typeof g !== 'object') return false;

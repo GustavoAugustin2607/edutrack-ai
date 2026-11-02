@@ -2030,7 +2030,7 @@ svg {
   margin: 30px auto 0;
   max-width: 420px;
 }
-.focus-task > label {
+.focus-task-label {
   color: #aebcdc;
   font-size: 12px;
   display: block;

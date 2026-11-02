@@ -163,7 +163,6 @@ export function useWorkspace() {
     const warn = (e: BeforeUnloadEvent) => {
       if (pending.current || (locked.current && error)) {
         e.preventDefault();
-        e.returnValue = '';
       }
     };
     window.addEventListener('beforeunload', warn);

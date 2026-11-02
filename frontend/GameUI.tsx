@@ -24,7 +24,6 @@ import {
   Rocket,
   ScrollText,
   Shield,
-  Snowflake,
   Sofa,
   Sparkles,
   Star,
@@ -50,7 +49,6 @@ import {
   newAchievements,
   streakInfo,
   type AchievementDef,
-  type GameSummary,
   type Quest,
 } from './game';
 import { day, emptyGame, gameOf, type Workspace } from './model';
@@ -150,63 +148,6 @@ export function Ring({
 }
 
 /* --------------------------------------------------------------- HUD */
-
-export function GameHUD({
-  summary,
-  name,
-  open,
-}: {
-  summary: GameSummary;
-  name: string;
-  open: (tab: string) => void;
-}) {
-  const { streak } = summary;
-  return (
-    <div className="g-hud">
-      <button
-        className={'g-hud-streak' + (streak.current ? ' lit' : '') + (streak.atRisk ? ' at-risk' : '')}
-        onClick={() => open('overview')}
-        aria-label={`Sequência de ${streak.current} dias${streak.atRisk ? ', estude hoje para manter' : ''}`}
-        title={streak.atRisk ? 'Estude hoje para manter sua sequência!' : `Sequência de ${streak.current} dias`}
-      >
-        <Flame size={17} />
-        <b>{streak.current}</b>
-        {streak.freezes > 0 && (
-          <span className="g-hud-freeze" title={`${streak.freezes} protetor(es)`}>
-            <Snowflake size={10} />
-            {streak.freezes}
-          </span>
-        )}
-      </button>
-      <button className="g-hud-coins" onClick={() => open('shop')} aria-label={`${summary.coins} moedas. Abrir loja`}>
-        <Coins size={16} />
-        <b>{summary.coins}</b>
-      </button>
-      <button
-        className="g-hud-level"
-        onClick={() => open('overview')}
-        aria-label={`Nível ${summary.level}, ${summary.xp} XP. Abrir jornada`}
-      >
-        <Ring progress={summary.progress} size={38} stroke={3}>
-          <Avatar name={name} frame={summary.frame} size={28} />
-        </Ring>
-        <span>
-          <small>
-            Nível {summary.level} · {summary.rank.name}
-          </small>
-          <em>
-            <i style={{ width: `${summary.progress}%` }} />
-          </em>
-          <small className="g-hud-xp">
-            {summary.into}/{summary.cost} XP
-          </small>
-        </span>
-      </button>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------ Quests */
 
 export function QuestRow({ quest, onClaim }: { quest: Quest; onClaim: (q: Quest) => void }) {
   const pct = Math.round((quest.value / quest.target) * 100);

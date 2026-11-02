@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import {
   ArrowRight,
-  ArrowUpRight,
   Plus,
   CalendarDays,
   BookOpen,
@@ -15,7 +14,6 @@ import {
   Flame,
   Timer,
   Target,
-  Download,
   ChevronLeft,
   ChevronRight,
   Pencil,

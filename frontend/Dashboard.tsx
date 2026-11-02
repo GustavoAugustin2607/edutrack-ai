@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { achievementStatus, dailyQuests, RARITY, weeklyQuests, type GameSummary, type Quest } from './game';
 import { CountUp, DailyQuests, GameIcon } from './GameUI';
-import { addDays, day, metrics, minutesLabel, prettyDate, prioritized, taskMinutes, type Task, type Workspace } from './model';
+import { addDays, day, minutesLabel, prettyDate, prioritized, taskMinutes, type Task, type Workspace } from './model';
 import { upcoming, unplanned } from './scheduling';
 import { useDashboardMotion } from './motion';
 import type { AIKind } from './ai';
@@ -53,7 +53,6 @@ export default function Dashboard({ state, onFocus, onPlan, onTasks, onReviews, 
   const today = day();
   const start = monday(today);
   const week = useMemo(() => Array.from({ length: 7 }, (_, index) => addDays(start, index)), [start]);
-  const m = metrics(state);
   const pending = prioritized(state);
   const deadlines = pending.filter(task => task.due_date).slice(0, 3);
   const futureBlocks = upcoming(state).sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));

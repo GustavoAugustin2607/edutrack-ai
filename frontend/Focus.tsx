@@ -10,7 +10,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { Choice, TabBar } from './ui';
-import { id, day, minutesLabel, type Workspace, type Task } from './model';
+import { id, day, minutesLabel, type Workspace } from './model';
 import { sessionXP } from './game';
 type TimerState = {
   id: string;
@@ -306,7 +306,7 @@ export default function Focus({
           )}
         </p>
         <div className="focus-task">
-          <label>Estou estudando</label>
+          <span className="focus-task-label">Estou estudando</span>
           <Choice
             label="Tarefa da sessão"
             value={timer.task}

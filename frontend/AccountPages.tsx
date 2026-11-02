@@ -7,14 +7,11 @@ import {
   Download,
   LogIn,
   LogOut,
-  Link2,
   Check,
   ShieldCheck,
-  Mail,
   ArrowRight,
   UserRound,
   Moon,
-  Sun,
   Volume2,
   Users,
   Crown,
@@ -244,7 +241,6 @@ export function AuthForm({
   initialMode = 'login',
   onSuccess,
   onModeChange,
-  onSignupEmail,
 }: {
   close: () => void;
   notify: (s: string) => void;
@@ -252,7 +248,6 @@ export function AuthForm({
   initialMode?: 'signup' | 'login';
   onSuccess?: (mode: 'signup' | 'login' | 'reset' | 'update') => void;
   onModeChange?: (mode: 'signup' | 'login' | 'reset' | 'update') => void;
-  onSignupEmail?: (email: string) => void;
 }) {
   const [mode, setMode] = useState<'signup' | 'login' | 'reset' | 'update'>(
       recovery ? 'update' : initialMode,

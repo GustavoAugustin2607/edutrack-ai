@@ -79,7 +79,7 @@ export async function generateStudyAI(
   if (!supabase)
     throw new Error('A conexão segura com o Tutor IA não está disponível.');
   type Pending = { status: 'pending'; request_id: string };
-  let { data, error } = await supabase.functions.invoke<StudyAIResult | Pending>(
+  const first = await supabase.functions.invoke<StudyAIResult | Pending>(
     'study-ai',
     {
       body: {
@@ -90,7 +90,8 @@ export async function generateStudyAI(
       signal,
     },
   );
-  if (error) throw new Error(await messageFromFunctionError(error));
+  if (first.error) throw new Error(await messageFromFunctionError(first.error));
+  let data = first.data;
   const deadline = Date.now() + 6 * 60 * 1000;
   while (data && 'status' in data && data.status === 'pending') {
     if (Date.now() > deadline) throw new Error('A geração demorou mais do que o esperado. Tente novamente.');

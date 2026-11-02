@@ -2,8 +2,6 @@ import {
   colors,
   day,
   id,
-  type Subject,
-  type Task,
   type Workspace,
 } from './model';
 const SCOPES =
