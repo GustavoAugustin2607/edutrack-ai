@@ -1,6 +1,6 @@
-# EduTrack AI — dicionário de dados, APIs e roteiro da avaliação
+# EduTrack AI — dicionário de dados e APIs
 
-Este documento descreve a **implementação atual** do EduTrack AI em React/TypeScript e Supabase. A especificação de negócio original menciona FlutterFlow e Xano; o aplicativo deste projeto usa outra arquitetura. Os nomes `subjects` e `academic_tasks` continuam reconhecíveis, mas são **visões de leitura** sobre um documento JSON, não tabelas independentes de escrita.
+Este documento descreve a **implementação atual** do EduTrack AI em React/TypeScript e Supabase. Os nomes `subjects` e `academic_tasks` continuam reconhecíveis, mas são **visões de leitura** sobre um documento JSON, não tabelas independentes de escrita.
 
 ## 1. Modelo de dados atual
 
@@ -9,7 +9,7 @@ O Supabase Auth mantém as contas. Os dados de estudo ficam em `public.study_wor
 | Objeto | Campo | Tipo | Significado / regra |
 | --- | --- | --- | --- |
 | `study_workspaces` | `user_id` | `uuid`, PK/FK | Identificador do aluno em `auth.users(id)`; exclusão da conta remove a linha. |
-|  | `payload` | `jsonb`, obrigatório | Documento com `schema_version`, `subjects`, `tasks`, `sessions`, `cards`, `blocks` e `settings`. Limite SQL de 2 MiB. |
+|  | `payload` | `jsonb`, obrigatório | Documento com `schema_version`, `subjects`, `tasks`, `sessions`, `cards`, `blocks`, `settings` e o campo opcional `game`. Limite SQL de 2 MiB. |
 |  | `revision` | `integer`, obrigatório | Versão do documento; começa em 1 e sobe a cada gravação válida. Evita sobrescrever mudanças de outra aba/dispositivo. |
 |  | `updated_at` | `timestamptz`, obrigatório | Última gravação do documento. |
 | `payload` | `schema_version` | `number` | Atualmente `1`. |
@@ -52,6 +52,7 @@ O Supabase Auth mantém as contas. Os dados de estudo ficam em `public.study_wor
 | `sessions[]` | `id`, `task_id`, `subject_id`, `minutes`, `created_at` | Sessões de estudo; base para tempo realizado. |
 | `cards[]` | `id`, `subject_id`, `question`, `answer`, `stage`, `due_date`, `reviews` | Flashcards e revisão. |
 | `blocks[]` | `id`, `task_id`, `date`, `time`, `minutes` | Horários planejados. |
+| `game` (opcional) | `claims`, `achievements`, `purchases`, `equipped`, `frozen`, `reviews`, `quizzes`, `arcade`, `house`, `public`, `best_streak` | Recompensas resgatadas, compras, casa e partidas. O XP não fica aqui: ele é calculado a partir do histórico. |
 | `settings` | `name`, `daily_minutes`, `focus_minutes`, `break_minutes`, `study_start`, `dark`, `google_client_id`, `last_sync` | Preferências do estudante e sincronização. |
 
 **Relacionamentos lógicos:** `tasks.subject_id → subjects.id`; `sessions.task_id → tasks.id`; `sessions.subject_id → subjects.id`; `blocks.task_id → tasks.id`; `cards.subject_id → subjects.id`. Como esses objetos são elementos do JSON, não há chave estrangeira SQL individual para cada relação. O aplicativo valida o formato do documento ao carregar.
@@ -94,8 +95,11 @@ Exemplo conceitual do corpo enviado à função de gravação:
 
 | Integração | Uso atual |
 | --- | --- |
-| Supabase Auth | Cadastro com `signUp`, entrada com `signInWithPassword` e recuperação de senha. |
-| Edge Function `POST /functions/v1/study-ai` | Tutor IA para quiz, flashcards e plano de estudos; requer sessão. A disponibilidade depende do provedor de IA configurado. |
+| Supabase Auth | Entrada com `signInWithPassword` e recuperação de senha por e-mail. |
+| Edge Function `POST /functions/v1/signup` | Cria a conta já confirmada, sem depender do envio de e-mail. |
+| Edge Function `POST /functions/v1/local-ai-worker` | Usada só pelo atendente local, com token próprio, para pegar pedidos da fila e devolver resultados. |
+| Tabela `public.leaderboard` | Ranking opcional. Cada aluno escreve só a própria linha; contas autenticadas podem ler. |
+| Edge Function `POST /functions/v1/study-ai` | Tutor IA para quiz, flashcards, explicação e plano de estudos; requer sessão. A disponibilidade depende do provedor de IA configurado. |
 | Google Classroom API v1 | Leitura autorizada de `courses`, `courses/{id}/courseWork` e `courses/{id}/courseWork/-/studentSubmissions`; importa matérias/atividades para o espaço do aluno. A integração atual **não envia trabalho ao Classroom**. |
 
 ## 3. Regras para Dashboard e Análise
@@ -104,22 +108,13 @@ O Dashboard usa `subjects`, `tasks`, `sessions` e `blocks` do espaço carregado.
 
 Para classificar uma tarefa concluída como **entregue no prazo** ou **entregue com atraso**, o EduTrack agora registra `completed_at` como data/hora ISO 8601 ao concluir. Ao reabrir uma tarefa, esse registro da tentativa atual é removido; uma nova conclusão recebe outro horário. A visão `academic_tasks` também expõe o campo. A análise compara a **data local** de `completed_at` com `due_date`: até a data-limite = no prazo; após = com atraso. Tarefas antigas concluídas sem esse histórico aparecem como “Sem histórico da entrega”. Tarefas sem `due_date` ficam fora do gráfico de pontualidade, com contagem explicada. O registro é a conclusão **no EduTrack**, não prova de entrega no Google Classroom.
 
-## 4. O que apresentar em cada avaliação
-
-O print da atividade **“Avaliação Parcial 02 - Aplicação”** solicita para a **segunda avaliação**:
-
-1. Todas as telas da aplicação.
-2. O dicionário de dados.
-3. As APIs do modelo de dados.
-4. O CRUD funcionando.
-
-A observação do mesmo print reserva **dashboard, insights e documentação em Markdown para a apresentação final**. As duas páginas acrescentadas à especificação formalizam essas telas, e a aplicação agora contém uma tela de Análise funcional. Para a segunda avaliação, mostre o fluxo de cadastro/login, crie uma matéria e uma atividade, leia a lista, edite ambas, conclua uma tarefa e exclua uma tarefa e uma disciplina. Mostre também a opção de arquivar quando se deseja preservar o histórico. Na aba Rede ou no código, mostre a leitura e a RPC de gravação. Use contas de teste para demonstrar que um usuário não enxerga os dados do outro.
-
-## 5. Fontes do próprio projeto
+## 4. Fontes do próprio projeto
 
 - `frontend/model.ts`: tipos e regras de métricas.
 - `frontend/Analysis.tsx`: gráfico e filtros da análise.
 - `frontend/repository.ts`: leitura e gravação no Supabase.
 - `backend/schema.sql`: tabela, políticas RLS, função RPC e visões.
+- `backend/gamification.sql`: ranking e suas políticas RLS.
+- `frontend/game.ts`: regras de XP, níveis, missões, conquistas e loja.
 - `frontend/Dashboard.tsx`: dashboard atual.
 - `frontend/classroom.ts` e `frontend/ai.ts`: integrações auxiliares.
