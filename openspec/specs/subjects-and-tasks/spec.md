@@ -30,3 +30,17 @@ The system SHALL let a student create, edit, delete, complete, reopen, filter an
 #### Scenario: Deleting a task
 - **WHEN** a student confirms the deletion of a task
 - **THEN** the task and its planned blocks are removed
+
+### Requirement: Subjects table
+The system SHALL store each subject with id, name, teacher, hours and the owner's user_id.
+
+#### Scenario: Student creates a subject
+- **WHEN** a student creates a subject
+- **THEN** it is stored linked to that student's user_id
+
+### Requirement: Academic tasks table
+The system SHALL store each academic task with title, status, due date and the subject_id of its subject, owned by the student's user_id.
+
+#### Scenario: Task linked to a subject
+- **WHEN** a student creates a task for a subject
+- **THEN** the task stores that subject_id and the student's user_id

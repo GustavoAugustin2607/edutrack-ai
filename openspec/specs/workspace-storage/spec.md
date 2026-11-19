@@ -43,3 +43,14 @@ The system MUST NOT ship service-role keys, model keys or worker tokens to the b
 #### Scenario: Production bundle
 - **WHEN** the frontend is built
 - **THEN** the bundle holds only the project URL and the publishable key
+
+### Requirement: Subjects CRUD API
+The system SHALL offer create, read, update and delete of subjects through the Supabase REST API, and MUST restrict every operation to the authenticated user.
+
+#### Scenario: Reading subjects
+- **WHEN** a student calls GET /rest/v1/subjects
+- **THEN** only that student's subjects are returned
+
+#### Scenario: Request without a session
+- **WHEN** a request has no user token
+- **THEN** no subject is returned or changed
