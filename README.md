@@ -76,11 +76,27 @@ flowchart LR
 
 ## Qualidade
 
-A cada push, o GitHub Actions roda typecheck, lint, build, validação das especificações e os 21 testes de ponta a ponta com Playwright. Eles cobrem tarefas, disciplinas, agenda, foco, revisões, gamificação, Arena, exportação em PDF e layout no celular.
+A cada push, o GitHub Actions roda typecheck, lint, build, validação das especificações, os testes dos scripts Python e os 21 testes de ponta a ponta com Playwright. Eles cobrem tarefas, disciplinas, agenda, foco, revisões, gamificação, Arena, exportação em PDF e layout no celular.
 
-O comportamento esperado está documentado em [`openspec/specs`](openspec/specs), com 16 funcionalidades, 69 requisitos e 95 cenários. O modelo de dados e as APIs estão em [`docs/dicionario-de-dados.md`](docs/dicionario-de-dados.md).
+O comportamento esperado está documentado em [`openspec/specs`](openspec/specs), com 17 funcionalidades, 72 requisitos e 101 cenários. O modelo de dados e as APIs estão em [`docs/dicionario-de-dados.md`](docs/dicionario-de-dados.md).
 
 Os testes rodam no modo demonstração, então as Edge Functions e as políticas do Supabase ainda não têm teste automatizado.
+
+## Scripts Python
+
+Três scripts em `scripts/`, com testes em `unittest`:
+
+- `calculate_progress.py`: porcentagem de tarefas concluídas, em JSON.
+- `search_subjects.py`: busca disciplinas pelo nome OU com tarefas atrasadas. A mesma regra roda no banco pela RPC `search_subjects`.
+- `generate_report.py`: relatório de desempenho em PDF.
+
+```bash
+pip install -r scripts/requirements.txt
+```
+
+```bash
+python -m unittest discover scripts
+```
 
 ## Rodar localmente
 
