@@ -30,3 +30,10 @@ The system SHALL return the student's subjects whose name contains the search te
 #### Scenario: Other students' data
 - **WHEN** a student calls the RPC
 - **THEN** only that student's subjects can be returned
+
+### Requirement: PDF progress report
+The system SHALL generate a PDF with the student name, the date and one row per subject with completed, total and percentage.
+
+#### Scenario: Generating the report
+- **WHEN** the script receives a student and a list of subjects
+- **THEN** it writes a PDF file and prints its path as JSON
