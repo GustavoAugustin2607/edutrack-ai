@@ -1,0 +1,2 @@
+- [x] 1.1 Create scripts/calculate_progress.py returning JSON
+- [x] 1.2 Handle zero tasks and invalid input without crashing

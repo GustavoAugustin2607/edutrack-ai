@@ -1,0 +1,2 @@
+- [x] 1.1 Create the search_subjects RPC with security invoker
+- [x] 1.2 Create scripts/search_subjects.py with the name OR overdue rule
