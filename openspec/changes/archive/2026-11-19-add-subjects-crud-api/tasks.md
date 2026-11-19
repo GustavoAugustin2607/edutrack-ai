@@ -1,0 +1,3 @@
+- [x] 1.1 Expose read access to subjects for the owner
+- [x] 1.2 Write changes through the save_study_workspace RPC
+- [x] 1.3 Restrict every operation to auth.uid()

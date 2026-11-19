@@ -1,0 +1,2 @@
+- [x] 1.1 Define the subjects fields (id, name, teacher, hours, user_id)
+- [x] 1.2 Link every subject to the authenticated user through user_id

@@ -1,0 +1,1 @@
+- [x] 1.1 Write AGENTS.md with the project rules

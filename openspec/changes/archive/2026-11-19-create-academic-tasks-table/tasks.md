@@ -1,0 +1,2 @@
+- [x] 1.1 Define the academic_tasks fields
+- [x] 1.2 Link subject_id to subjects
