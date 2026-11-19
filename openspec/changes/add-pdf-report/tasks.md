@@ -1,0 +1,2 @@
+- [x] 1.1 Create scripts/generate_report.py using reportlab
+- [x] 1.2 Reuse calculate_progress for the percentages
