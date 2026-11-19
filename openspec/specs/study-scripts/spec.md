@@ -19,3 +19,14 @@ The system SHALL compute progress as completed divided by total tasks and print 
 #### Scenario: Invalid input
 - **WHEN** completed is greater than total
 - **THEN** it prints a JSON error and exits with code 1
+
+### Requirement: Hybrid subject search
+The system SHALL return the student's subjects whose name contains the search term OR that have tasks not done with a past due date.
+
+#### Scenario: Match by name or by overdue tasks
+- **WHEN** a student searches for "mat" with the overdue filter on
+- **THEN** subjects matching the name and subjects with overdue tasks are both returned
+
+#### Scenario: Other students' data
+- **WHEN** a student calls the RPC
+- **THEN** only that student's subjects can be returned
