@@ -15,3 +15,7 @@ config.json
 /test-results
 .playwright*
 /coverage
+
+# Python
+__pycache__/
+*.pyc
