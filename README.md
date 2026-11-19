@@ -36,6 +36,14 @@ Estudar em dia exige três coisas que costumam ficar separadas: saber o que faze
 |---|---|
 | ![Visão geral no tema escuro](docs/screenshots/visao-geral-escuro.png) | <img src="docs/screenshots/celular-escuro.png" alt="Visão geral no celular" width="280"> |
 
+## Tecnologias Utilizadas
+
+- Git & GitHub
+- VS Code
+- Node.js
+- OpenSpec
+- Supabase (back-end no lugar do Xano)
+
 ## Arquitetura
 
 ```mermaid
