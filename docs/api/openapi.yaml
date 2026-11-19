@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: EduTrack AI API (Supabase)
+  version: 1.0.0
+  description: |
+    Endpoints used by the EduTrack AI app. Every call needs the project's publishable
+    key in `apikey`; reading or writing student data also needs the student's JWT in
+    `Authorization: Bearer`. Row Level Security limits every query to `auth.uid()`.
+servers:
+  - url: https://xtticfdiyfsgpnbudzht.supabase.co
+security:
+  - apikey: []
+    bearer: []
+tags:
+  - name: subjects
+  - name: academic_tasks
+  - name: workspace
+  - name: search
+  - name: functions
+paths:
+  /rest/v1/subjects:
+    get:
+      tags: [subjects]
+      summary: List the student's subjects (read)
+      parameters:
+        - { name: select, in: query, schema: { type: string, example: 'id,name,teacher,hours' } }
+        - { name: name, in: query, description: 'PostgREST filter, e.g. ilike.*mat*', schema: { type: string } }
+      responses:
+        '200': { description: Subjects of the authenticated student, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Subject' } } } } }
+        '401': { description: Without a student token (permission denied for view subjects) }
+  /rest/v1/academic_tasks:
+    get:
+      tags: [academic_tasks]
+      summary: List the student's academic tasks (read)
+      parameters:
+        - { name: subject_id, in: query, description: 'e.g. eq.<subject id>', schema: { type: string } }
+      responses:
+        '200': { description: Tasks of the authenticated student, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/AcademicTask' } } } } }
+        '401': { description: Without a student token }
+  /rest/v1/study_workspaces:
+    get:
+      tags: [workspace]
+      summary: Read the student's workspace document
+      parameters:
+        - { name: select, in: query, schema: { type: string, example: 'payload,revision' } }
+      responses:
+        '200': { description: The student's own row only (policy own_select) }
+        '401': { description: Without a student token }
+  /rest/v1/rpc/save_study_workspace:
+    post:
+      tags: [workspace]
+      summary: Create, update or delete subjects and tasks (writes the whole document)
+      description: Creating, editing and deleting a subject or task changes the document and saves it with the last known revision.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [new_payload, expected_revision]
+              properties:
+                new_payload: { type: object, description: 'Workspace with subjects, tasks, sessions, cards, blocks and settings' }
+                expected_revision: { type: integer, example: 3 }
+      responses:
+        '200': { description: New revision number, content: { application/json: { schema: { type: integer } } } }
+        '409': { description: 'Error 40001: another tab or device saved first' }
+  /rest/v1/rpc/search_subjects:
+    post:
+      tags: [search]
+      summary: Hybrid search - subjects by name OR with overdue tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                p_name: { type: string, example: mat }
+                p_overdue: { type: boolean, example: true }
+      responses:
+        '200': { description: Matching subjects, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/SearchResult' } } } } }
+        '401': { description: Without a student token (anon has no execute permission) }
+  /functions/v1/study-ai:
+    post:
+      tags: [functions]
+      summary: AI tutor - quiz, flashcards, explanation or study plan
+      responses:
+        '200': { description: Generated content validated against the expected shape }
+  /functions/v1/signup:
+    post:
+      tags: [functions]
+      summary: Create an already confirmed account
+      security:
+        - apikey: []
+      responses:
+        '200': { description: Account created }
+        '409': { description: E-mail already registered }
+components:
+  securitySchemes:
+    apikey: { type: apiKey, in: header, name: apikey }
+    bearer: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    Subject:
+      type: object
+      properties:
+        id: { type: string }
+        user_id: { type: string, format: uuid }
+        name: { type: string }
+        teacher: { type: string }
+        hours: { type: number }
+        description: { type: string }
+        archived: { type: boolean }
+    AcademicTask:
+      type: object
+      properties:
+        id: { type: string }
+        user_id: { type: string, format: uuid }
+        subject_id: { type: string }
+        title: { type: string }
+        status: { type: string, enum: [todo, doing, done] }
+        due_date: { type: string, example: '2026-11-25' }
+        estimated_minutes: { type: number }
+        completed_at: { type: string, nullable: true }
+    SearchResult:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        overdue_tasks: { type: integer }
