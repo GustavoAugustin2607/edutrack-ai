@@ -131,4 +131,4 @@ docs/                   dicionário de dados, referências e prints
 
 ## Autoria
 
-Projeto acadêmico de Gustavo Paulino Augustin, desenvolvido com apoio de ferramentas de IA (Codex e Claude Code).
+Projeto acadêmico de Gustavo Paulino Augustin e Enzo Cardoso Mariano (Faculdade Impacta), desenvolvido com apoio de ferramentas de IA (Codex e Claude Code).
